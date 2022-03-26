@@ -7,7 +7,7 @@ Vous pouvez retrouver l'ensemble de ce projet sur cet [article](https://www.domo
 
 ## Circuits et Schémas
 
-Les circuits et schémas ont été conçu avec KiCad 6.0
+Les circuits et schémas ont été conçus avec KiCad 6.0
 
 ## Pièces 3D
 
