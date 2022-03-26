@@ -1,6 +1,6 @@
 # Projet Eclipse
 
-Bienvenue sur ce projet d'automatisation de la lampe IKEA modèle PS2014
+Bienvenue sur ce projet de motorisation de la lampe IKEA modèle PS2014
 
 Vous pouvez retrouver l'ensemble de ce projet sur cet [article](https://www.domotioque-passion.fr/).
 
