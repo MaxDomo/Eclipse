@@ -19,7 +19,7 @@
             "includePath": [
                 "C:\\Users\\Utilisateur\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\tools\\sdk\\include",
                 "C:\\Users\\Utilisateur\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\tools\\sdk\\lwip2\\include",
-                "c:\\Users\\Utilisateur\\Desktop\\Projet automatisation lampe IKEA\\Programmation\\RemoteController\\build\\core",
+                "c:\\Users\\Utilisateur\\Desktop\\Eclipse\\Eclipse\\Programmation\\RemoteController\\build\\core",
                 "C:\\Users\\Utilisateur\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\cores\\esp8266",
                 "C:\\Users\\Utilisateur\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\variants\\nodemcu",
                 "C:\\Users\\Utilisateur\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266WiFi\\src",
