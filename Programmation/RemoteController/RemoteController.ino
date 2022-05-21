@@ -21,7 +21,7 @@
 #endif
 
 #define HTTP_OTA_URL "http://firmwares.domotique-passion.fr/eclipse/"
-#define FIRMWARE_NAME "eclipse-v1.30-BETA"
+#define FIRMWARE_NAME "eclipse-v1.70-BETA"
 
 #define FPSTR(pstr_pointer) (reinterpret_cast<const __FlashStringHelper *>(pstr_pointer))
 
@@ -765,7 +765,7 @@ void handleWifiSave()
         page.replace("{time}", "30");
         page.replace("{url}", newUrl);
 
-        //Redémarrage de l'ESP
+        // Redémarrage de l'ESP
         delayedPeriod = 10000;
         delayedTime = millis();
         delayedFunction = &restart;
@@ -1585,6 +1585,47 @@ void sendCommand(String cmd)
   }
 }
 
+void runExtra()
+{
+  String hostname = getHostname();
+  // Si connecté au réseau Wifi
+  if (WiFi.status() == WL_CONNECTED)
+  {
+
+    if (config.containsKey("hue") && config["hue"].containsKey("enabled") && config["hue"]["enabled"].as<bool>() == true)
+    {
+      lightDevice = new EspalexaDevice(config["hue"]["light_name"] | hueLightName, lightDeviceChanged, EspalexaDeviceType::onoff);
+      espalexa.addDevice(lightDevice);
+
+      lampShadeDevice = new EspalexaDevice(config["hue"]["lampshade_name"] | hueLampshadeName, lampShadeDeviceChanged, EspalexaDeviceType::onoff);
+      espalexa.addDevice(lampShadeDevice);
+
+      espalexa.begin(&server);
+
+      hueEnabled = true;
+    }
+
+    if (config.containsKey("mqtt") && config["mqtt"].containsKey("enabled") && config["mqtt"]["enabled"].as<bool>() == true)
+    {
+      mqttClient.setServer(config["mqtt"]["host"].as<char *>(), config["mqtt"]["port"].as<int>());
+      mqttClient.setCallback(mqttCallback);
+
+      mqttConnect(config["mqtt"]["client"] | "", config["mqtt"]["user"] | "", config["mqtt"]["pass"] | "", config["mqtt"]["in_topic"] | "");
+
+      mqttPublish("tele", "LWT", "online", true);
+      mqttPublish("stat", "RESULT", "{\"LIGHT\":\"" + lightStatus + "\",\"LAMPSHADE\":\"" + lampshadeStatus + "\"}");
+
+      mqttEnabled = true;
+    }
+
+    statusTime = millis();
+
+#ifdef USEOTA
+    beginOTA(hostname.c_str());
+#endif
+  }
+}
+
 void setup()
 {
   WiFi.mode(WIFI_AP_STA);
@@ -1654,42 +1695,10 @@ void setup()
     startSoftAP(hostname);
   }
 
-  // Si connecté au réseau Wifi
-  if (WiFi.isConnected())
-  {
 
-    if (config.containsKey("hue") && config["hue"].containsKey("enabled") && config["hue"]["enabled"].as<bool>())
-    {
-      lightDevice = new EspalexaDevice(config["hue"]["light_name"] | hueLightName, lightDeviceChanged, EspalexaDeviceType::onoff);
-      espalexa.addDevice(lightDevice);
-
-      lampShadeDevice = new EspalexaDevice(config["hue"]["lampshade_name"] | hueLampshadeName, lampShadeDeviceChanged, EspalexaDeviceType::onoff);
-      espalexa.addDevice(lampShadeDevice);
-
-      espalexa.begin(&server);
-
-      hueEnabled = true;
-    }
-
-    if (config.containsKey("mqtt") && config["mqtt"].containsKey("enabled") && config["mqtt"]["enabled"].as<bool>())
-    {
-      mqttClient.setServer(config["mqtt"]["host"].as<char *>(), config["mqtt"]["port"].as<int>());
-      mqttClient.setCallback(mqttCallback);
-
-      mqttConnect(config["mqtt"]["client"] | "", config["mqtt"]["user"] | "", config["mqtt"]["pass"] | "", config["mqtt"]["in_topic"] | "");
-
-      mqttPublish("tele", "LWT", "online", true);
-      mqttPublish("stat", "RESULT", "{\"LIGHT\":\"" + lightStatus + "\",\"LAMPSHADE\":\"" + lampshadeStatus + "\"}");
-
-      mqttEnabled = true;
-    }
-
-    statusTime = millis();
-
-#ifdef USEOTA
-    beginOTA(hostname.c_str());
-#endif
-  }
+  delayedPeriod = 5000;
+  delayedTime = millis();
+  delayedFunction = &runExtra;
 }
 
 void loop()
